@@ -9,7 +9,7 @@ script:
   - docker run -e CI=true markfreedman/react-test npm test -- --coverage
 
 after_success:
-  - docker built -t markfreedman/multi-client ./client
+  - docker build -t markfreedman/multi-client ./client
   - docker build -t markfreedman/multi-nginx ./nginx
   - docker build -t markfreedman/multi-server ./server
   - docker build -t markfreedman/multi-worker ./worker
