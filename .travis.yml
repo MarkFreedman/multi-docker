@@ -1,0 +1,22 @@
+sudo: required
+services:
+  - docker
+
+before_install:
+  - docker build -t markfreedman/react-test -f ./client/Dockerfile.dev ./client
+
+script:
+  - docker run -e CI=true markfreedman/react-test npm test -- --coverage
+
+after_success:
+  - docker built -t markfreedman/multi-client ./client
+  - docker build -t markfreedman/multi-nginx ./nginx
+  - docker build -t markfreedman/multi-server ./server
+  - docker build -t markfreedman/multi-worker ./worker
+  # Log in to the Docker CLI
+  - echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_ID" --password-stdin
+  # Push to Docker Hub
+  - docker push markfreedman/multi-client
+  - docker push markfreedman/multi-nginx
+  - docker push markfreedman/multi-server
+  - docker push markfreedman/multi-worker
